@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Register</title>
+</head>
+
+<body>
+  <div class="form-wrapper">
+    <form method="post" action="register">
+      <h1 class="title">Register</h1>
+      <p class="secondary">Please fill in the form to create an account.</p>
+      <hr>
+      <p class="error" th:if="${error}">该账户名已被注册</p>
+
+      <div class="input-group">
+        <label for="username">Username</label><br>
+        <input id="username" name="username" type="text"
+               required></input><br>
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label><br>
+        <input id="password" name="password" type="password" 
+               required ></input><br>
+      </div>
+
+      <div class="input-group">
+        <input type="checkbox" required>
+        <label for="tap">隐私条款
+            <a href="https://policies.google.com/privacy?hl=en-US" target="_blank">查看隐私条款</a>.
+        </label>
+      </div>
+
+      <input class="submit-button" type="submit" value="Register"></input>
+
+      <p class="secondary">已有账户 <a th:href="@{/login}">点击进入</a>.</p>
+    </form>
+  </div>
+</body>
+
+</html>
