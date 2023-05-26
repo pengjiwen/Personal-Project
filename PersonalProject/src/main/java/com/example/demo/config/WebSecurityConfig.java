@@ -29,7 +29,7 @@ public class WebSecurityConfig {
         ).authorizeHttpRequests(authz -> authz
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .permitAll()
-                .requestMatchers("/register", "/login")
+                .requestMatchers("/register","/**/*.css", "/login")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -39,12 +39,13 @@ public class WebSecurityConfig {
     }
     
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
     
     @Bean
-    public UserDetailsService userDetailsService() {
+    //修改，按照老师说的改
+    public static UserDetailsService userDetailsService() {
         var manager = new InMemoryUserDetailsManager();
         
         manager.createUser(User.builder()

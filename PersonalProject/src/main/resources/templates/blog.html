@@ -2,45 +2,169 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Blog</title>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js" integrity="sha256-xLD7nhI62fcsEZK2/v8LsBcb4lG7dgULkuXoXB/j91c=" crossorigin="anonymous"></script>
-	<script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>	
-	<link rel="stylesheet" href="blog.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200&display=swap" rel="stylesheet">
+  <title>[[${user}]]的博客</title>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js" integrity="sha256-xLD7nhI62fcsEZK2/v8LsBcb4lG7dgULkuXoXB/j91c=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>  
+  <link rel="stylesheet" href="blog.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200&display=swap" rel="stylesheet">
+  <script>
+    $(document).ready(function() {
+      // 内容
     
-	<script>
-    </script>
-
-
+      var $blogList = $("#blogList");
+      $.each(blogs, function(index, blog) {
+        var $blogItem = $("<div>").addClass("cards_item");
+        var $blogTitle = $("<h2>").text(blog.title);
+        var $blogContent = $("<p>").text(blog.content.substr(0, 20));
+        
+        $blogItem.append($blogTitle);
+        $blogItem.append($blogContent);
+        
+        // 点击博客标题展示完整内容
+        $blogTitle.click(function() {
+          var $blogDetail = $("<div>").addClass("blog-detail");
+          var $blogFullContent = $("<p>").text(blog.content);
+          var $editButton = $("<button>").text("编辑");
+          var $deleteButton = $("<button>").text("删除");
+          
+          $editButton.click(function() {
+            // 编辑
+          });
+          
+          $deleteButton.click(function() {
+            // 删除
+          });
+          
+          $blogDetail.append($blogFullContent);
+          $blogDetail.append($editButton);
+          $blogDetail.append($deleteButton);
+          
+          // 添加新内容
+          $("#blogDetailSection").empty().append($blogDetail);
+        });
+        
+        $blogList.append($blogItem);
+      });
+      
+      // 博客一览导航
+      $("a[href='#blogs']").click(function() {
+        // 滚动到博客概览区域
+        $('html, body').animate({
+          scrollTop: $("#blogs").offset().top
+        }, 500);
+      });
+      
+      // 添加博客
+      $("a[href='#addBlog']").click(function() {
+        
+        $("#addBlogForm").show();
+       
+        $("#blogDetailSection").empty();
+      });
+      
+      // 发布博客
+      $("#publishButton").click(function() {
+        // 获取输入的博客标题和内容
+        var title = $("#blogTitleInput").val();
+        var content = $("#blogContentInput").val();
+        
+        // 创建新的博客
+        var newBlog = {
+          title: title,
+          content: content
+        };
+        
+        // 将新博客添加到博客列表
+        blogs.push(newBlog);
+        
+        // 清空输入框内容
+        $("#blogTitleInput").val("");
+        $("#blogContentInput").val("");
+        
+        // 重新生成博客列表
+        $blogList.empty();
+        $.each(blogs, function(index, blog) {
+          var $blogItem = $("<div>").addClass("cards_item");
+          var $blogTitle = $("<h2>").text(blog.title);
+          var $blogContent = $("<p>").text(blog.content.substr(0, 20));
+          
+          $blogItem.append($blogTitle);
+          $blogItem.append($blogContent);
+          
+          $blogTitle.click(function() {
+            var $blogDetail = $("<div>").addClass("blog-detail");
+            var $blogFullContent = $("<p>").text(blog.content);
+            var $editButton = $("<button>").text("编辑");
+            var $deleteButton = $("<button>").text("删除");
+            
+            $editButton.click(function() {
+              // 编辑
+            });
+            
+            $deleteButton.click(function() {
+              // 删除
+            });
+            
+            $blogDetail.append($blogFullContent);
+            $blogDetail.append($editButton);
+            $blogDetail.append($deleteButton);
+            
+            $("#blogDetailSection").empty().append($blogDetail);
+          });
+          
+          $blogList.append($blogItem);
+        });
+        
+        // 隐藏博客表单
+        $("#addBlogForm").hide();
+      });
+      
+      // 根据用户是否登录显示个人页面
+      var isLoggedIn = [[${isLoggedIn}]];
+      if (isLoggedIn) {
+        $("a[href='#personal']").show();
+      } else {
+        $("a[href='#personal']").hide();
+      }
+    });
+  </script>
 </head>
-
 <body>
+  <nav class="navbar">
+    <ul class="nav-list">
+      <li><a href="#blogs">博客一览</a></li>
+      <li><a href="#personal" style="display: none;">个人页面</a></li>
+      <li>
+        <input type="text" id="searchInput" placeholder="输入博客标题">
+        <button id="searchButton">搜索</button>
+      </li>
+      <li><a href="#addBlog">添加博客</a></li>
+    </ul>
+  </nav>
   <h1>[[${user}]]的博客</h1>
-  <div class="cards">
-    <div class="cards_item">
-      <article>
-        <a href="https://www.ctrip.com/"><h2>旅行</h2></a>
-        <a href="https://www.ctrip.com/"><h3>夏季</h3></a>
-       
-		<a href="https://www.viagogo.com/ww/Concert-Tickets/Rock-and-Pop/Mayday-Tickets?AffiliateID=49&adposition=&PCID=PSROWGOOMAYDA39F6FF06991D&AdID=654863107888&MetroRegionID=&psc=%2c&ps=%2c&ps_p=0&ps_c=12774923160&ps_ag=121460208615&ps_tg=kwd-301577713&ps_ad=654863107888&ps_adp=%2c&ps_fi=%2c&ps_li=%2c&ps_lp=9053313&ps_n=g&ps_d=c&gad=1&gclid=Cj0KCQjwu-KiBhCsARIsAPztUF2VdMKSzEykA4usavBYyNOKLjTk-KSJdZw11RiVVr6l0xbwgw1Y2AIaAmaBEALw_wcB"> <p>五月天演唱会</p></a>
-      </article>
+  
+  <div id="blogs">
+    <h2 id="blogListSection">博客概览</h2>
+    <div id="blogList" class="cards"></div>
+  </div>
+  
+  <div id="blogDetailSection"></div>
+  
+  <div id="addBlogForm" style="display: none;">
+    <h2>添加博客</h2>
+    <div>
+      <label for="blogTitleInput">标题:</label>
+      <input type="text" id="blogTitleInput">
     </div>
-    <div class="cards_item">
-      <article>
-       <a href=" http://www.nlc.cn/web/index.shtml"><h2>读书</h2></a>
-       <a href="https://mp.weixin.qq.com/s?__biz=MzA4NjE2MTA4MQ==&mid=2650642195&idx=1&sn=454feed73a04ccf0b0b819841474730a&chksm=87c5d4c5b0b25dd31bfd30496544c06b114bfc66cc174849d5265ebd2b8914867f4479b8feae&scene=27"><h3>三月</h3></a>
-       
-		<a href="http://dzj.hubei.gov.cn/bd/dzwy/dzwy/202011/t20201123_3044786.shtml"><p>读钢铁是怎样炼成的有感</p></a>
-      </article>
+    <div>
+      <label for="blogContentInput">内容:</label>
+      <textarea id="blogContentInput"></textarea>
     </div>
-	<div class="cards_item">
-	  <article>
-	<a href="https://blog.163.com/">新建</a>
-	  </article>
-	</div>
+    <div>
+      <button id="publishButton">发布</button>
+    </div>
   </div>
 </body>
-
 </html>
