@@ -11,8 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200&display=swap" rel="stylesheet">
   <script>
     $(document).ready(function() {
-      // 内容
-    
+      // 博客列表数据
+      var blogs = [];
+
       var $blogList = $("#blogList");
       $.each(blogs, function(index, blog) {
         var $blogItem = $("<div>").addClass("cards_item");
@@ -30,11 +31,26 @@
           var $deleteButton = $("<button>").text("删除");
           
           $editButton.click(function() {
-            // 编辑
+            // 执行编辑逻辑
+            var newTitle = prompt("请输入新的博客标题", blog.title);
+            var newContent = prompt("请输入新的博客内容", blog.content);
+            
+            if (newTitle && newContent) {
+              blog.title = newTitle;
+              blog.content = newContent;
+              $blogTitle.text(newTitle);
+              $blogContent.text(newContent.substr(0, 20));
+              $blogFullContent.text(newContent);
+            }
           });
           
           $deleteButton.click(function() {
-            // 删除
+            // 执行删除逻辑
+            if (confirm("确认删除该博客吗？")) {
+              blogs.splice(index, 1);
+              $blogItem.remove();
+              $blogDetail.empty();
+            }
           });
           
           $blogDetail.append($blogFullContent);
@@ -58,14 +74,14 @@
       
       // 添加博客
       $("a[href='#addBlog']").click(function() {
-        
         $("#addBlogForm").show();
-       
         $("#blogDetailSection").empty();
       });
       
-      // 发布博客
-      $("#publishButton").click(function() {
+      // 提交博客表单
+      $("#blogForm").submit(function(event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+        
         // 获取输入的博客标题和内容
         var title = $("#blogTitleInput").val();
         var content = $("#blogContentInput").val();
@@ -100,11 +116,26 @@
             var $deleteButton = $("<button>").text("删除");
             
             $editButton.click(function() {
-              // 编辑
+              // 执行编辑逻辑
+              var newTitle = prompt("请输入新的博客标题", blog.title);
+              var newContent = prompt("请输入新的博客内容", blog.content);
+              
+              if (newTitle && newContent) {
+                blog.title = newTitle;
+                blog.content = newContent;
+                $blogTitle.text(newTitle);
+                $blogContent.text(newContent.substr(0, 20));
+                $blogFullContent.text(newContent);
+              }
             });
             
             $deleteButton.click(function() {
-              // 删除
+              // 执行删除逻辑
+              if (confirm("确认删除该博客吗？")) {
+                blogs.splice(index, 1);
+                $blogItem.remove();
+                $blogDetail.empty();
+              }
             });
             
             $blogDetail.append($blogFullContent);
@@ -119,10 +150,25 @@
         
         // 隐藏博客表单
         $("#addBlogForm").hide();
+        
+        // 发送博客数据到后端
+        $.ajax({
+          type: "POST",
+          url: "/blogs/save", 
+          data: JSON.stringify(newBlog),
+          contentType: "application/json",
+          success: function(response) {
+            console.log("博客提交成功");
+          },
+          error: function(xhr, status, error) {
+            console.error("博客提交失败:", error);
+          }
+        });
       });
-      
+
       // 根据用户是否登录显示个人页面
-      var isLoggedIn = [[${isLoggedIn}]];
+      var isLoggedIn = true;
+
       if (isLoggedIn) {
         $("a[href='#personal']").show();
       } else {
@@ -154,17 +200,19 @@
   
   <div id="addBlogForm" style="display: none;">
     <h2>添加博客</h2>
-    <div>
-      <label for="blogTitleInput">标题:</label>
-      <input type="text" id="blogTitleInput">
-    </div>
-    <div>
-      <label for="blogContentInput">内容:</label>
-      <textarea id="blogContentInput"></textarea>
-    </div>
-    <div>
-      <button id="publishButton">发布</button>
-    </div>
+    <form id="blogForm">
+      <div>
+        <label for="blogTitleInput">标题:</label>
+        <input type="text" id="blogTitleInput">
+      </div>
+      <div>
+        <label for="blogContentInput">内容:</label>
+        <textarea id="blogContentInput"></textarea>
+      </div>
+      <div>
+        <button id="publishButton">发布</button>
+      </div>
+    </form>
   </div>
 </body>
 </html>

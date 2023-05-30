@@ -1,64 +1,57 @@
 package com.example.demo.services;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.demo.models.Blog;
+import com.example.demo.repositories.BlogRepository;
+
+import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.models.Blog;
+import java.util.List;
 
 @Service
 public class BlogService {
-    private List<Blog> blogs;
+    private final BlogRepository blogRepository;
 
-    public BlogService() {
-        this.blogs = new ArrayList<>();
+    public BlogService(BlogRepository blogRepository) {
+        this.blogRepository = blogRepository;
     }
 
-    // 添加博客
-    public void addBlog(String title, String content) {
+    // 添加博客到数据库
+    @Transactional
+    public void addBlogToDatabase(String title, String content) {
         Blog blog = new Blog(title, content);
-        blogs.add(blog);
+        blogRepository.save(blog);
+        blogRepository.flush();
     }
+
 
     // 删除博客
     public void deleteBlog(Long id) {
-        blogs.removeIf(blog -> blog.getId().equals(id));
+        blogRepository.deleteById(id);
     }
 
     // 编辑博客
     public void editBlog(Long id, String newContent) {
-        for (Blog blog : blogs) {
-            if (blog.getId().equals(id)) {
-                blog.setContent(newContent);
-                break;
-            }
+        Blog blog = blogRepository.findById(id).orElse(null);
+        if (blog != null) {
+            blog.setContent(newContent);
+            blogRepository.save(blog);
         }
     }
 
     // 获取所有博客
     public List<Blog> getAllBlogs() {
-        return blogs;
+        return blogRepository.findAll();
     }
 
     // 根据ID获取博客
     public Blog getBlogById(Long id) {
-        for (Blog blog : blogs) {
-            if (blog.getId().equals(id)) {
-                return blog;
-            }
-        }
-        return null;
+        return blogRepository.findById(id).orElse(null);
     }
 
     // 根据关键词搜索博客
     public List<Blog> searchBlogs(String keyword) {
-        List<Blog> matchedBlogs = new ArrayList<>();
-        for (Blog blog : blogs) {
-            if (blog.getContent().contains(keyword)) {
-                matchedBlogs.add(blog);
-            }
-        }
-        return matchedBlogs;
+        return blogRepository.findByContentContaining(keyword);
     }
 }

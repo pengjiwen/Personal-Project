@@ -10,17 +10,18 @@ public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String title;
     private String content;
+
+    public Blog() {
+    }
 
     public Blog(String title, String content) {
         this.title = title;
         this.content = content;
     }
 
-    public Blog() {
-    }
+    // 省略 getter 和 setter 方法
 
     public Long getId() {
         return id;
@@ -44,10 +45,5 @@ public class Blog {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    @Override
-    public String toString() {
-        return "Blog [id=" + id + ", title=" + title + ", content=" + content + "]";
     }
 }

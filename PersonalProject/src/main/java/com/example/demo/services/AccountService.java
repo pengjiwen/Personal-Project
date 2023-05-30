@@ -1,14 +1,13 @@
 package com.example.demo.services;
 
+import com.example.demo.models.Account;
+import com.example.demo.repositories.AccountRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.example.demo.models.Account;
-import com.example.demo.repositories.AccountRepository;
 
 @Service
 public class AccountService implements UserDetailsService {
@@ -25,7 +24,7 @@ public class AccountService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = repository.findByUsername(username);
         if (account == null) {
-            throw new UsernameNotFoundException("Invalid username or password");
+            throw new UsernameNotFoundException("error");
         }
         return User.builder()
                 .username(account.getUsername())
